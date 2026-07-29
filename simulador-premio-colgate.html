@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>¿Cuánto puedes ganar este mes? | Simulador de Concurso</title>
+<style>
+  :root{
+    --azul-oscuro:#0B2545;
+    --azul-oscuro-2:#123a6b;
+    --rojo:#E30613;
+    --rojo-suave:#ff2f3d;
+    --gris-claro:#F4F6F9;
+    --gris-borde:#E4E9F0;
+    --blanco:#FFFFFF;
+    --texto-suave:#5B6B82;
+    --sombra: 0 10px 30px rgba(11,37,69,0.08);
+    --sombra-fuerte: 0 18px 45px rgba(11,37,69,0.14);
+    --radio: 20px;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--gris-claro);
+    font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    color:var(--azul-oscuro);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding:28px 18px 60px;
+  }
+
+  /* HEADER */
+  header{
+    text-align:center;
+    margin-bottom:28px;
+    padding-top:6px;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--blanco);
+    border:1px solid var(--gris-borde);
+    color:var(--rojo);
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:0.08em;
+    padding:6px 14px;
+    border-radius:999px;
+    margin-bottom:16px;
+    box-shadow:var(--sombra);
+  }
+  h1{
+    font-size:clamp(26px, 6vw, 38px);
+    line-height:1.15;
+    margin:0 0 10px;
+    font-weight:800;
+    color:var(--azul-oscuro);
+    letter-spacing:-0.02em;
+  }
+  h1 span{color:var(--rojo);}
+  .subtitle{
+    color:var(--texto-suave);
+    font-size:15.5px;
+    max-width:480px;
+    margin:0 auto;
+    line-height:1.5;
+  }
+
+  /* SECTION TITLES */
+  .section-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:36px 0 16px;
+  }
+  .step-dot{
+    width:30px;height:30px;
+    border-radius:50%;
+    background:var(--azul-oscuro);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    font-size:14px;
+    flex-shrink:0;
+  }
+  .section-title h2{
+    font-size:18px;
+    margin:0;
+    font-weight:800;
+    color:var(--azul-oscuro);
+  }
+  .section-title p{
+    margin:0;
+    font-size:13px;
+    color:var(--texto-suave);
+  }
+
+  /* CARDS - exhibiciones */
+  .cards{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  @media (min-width:560px){
+    .cards{grid-template-columns:1fr 1fr 1fr;}
+  }
+
+  .card{
+    background:var(--blanco);
+    border-radius:var(--radio);
+    padding:18px 16px;
+    box-shadow:var(--sombra);
+    border:1px solid var(--gris-borde);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    transition:box-shadow .25s ease, transform .25s ease;
+  }
+  .card:hover{box-shadow:var(--sombra-fuerte); transform:translateY(-2px);}
+
+  .card-icon{
+    width:44px;height:44px;
+    border-radius:14px;
+    background:var(--gris-claro);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+  }
+  .card-title{
+    font-weight:700;
+    font-size:14.5px;
+    color:var(--azul-oscuro);
+    line-height:1.25;
+    min-height:36px;
+  }
+  .card-value{
+    font-size:13px;
+    color:var(--texto-suave);
+  }
+  .card-value b{color:var(--rojo); font-size:14px;}
+
+  .counter-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-top:4px;
+    background:var(--gris-claro);
+    border-radius:14px;
+    padding:6px;
+  }
+  .counter-btn{
+    width:42px;height:42px;
+    border-radius:10px;
+    border:none;
+    background:var(--blanco);
+    color:var(--azul-oscuro);
+    font-size:20px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 2px 6px rgba(11,37,69,0.08);
+    transition:all .18s ease;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .counter-btn:hover{background:var(--azul-oscuro); color:#fff; transform:scale(1.06);}
+  .counter-btn:active{transform:scale(0.94);}
+  .counter-btn.plus{color:var(--rojo);}
+  .counter-btn.plus:hover{background:var(--rojo); color:#fff;}
+  .counter-num{
+    font-size:22px;
+    font-weight:800;
+    color:var(--azul-oscuro);
+    min-width:30px;
+    text-align:center;
+  }
+  .max-note{
+    font-size:11.5px;
+    color:var(--texto-suave);
+    text-align:center;
+  }
+  .warn-msg{
+    font-size:12px;
+    color:var(--rojo);
+    font-weight:700;
+    text-align:center;
+    min-height:16px;
+    opacity:0;
+    transition:opacity .2s ease;
+  }
+  .warn-msg.show{opacity:1;}
+
+  /* SOS SLIDER */
+  .sos-card{
+    background:var(--blanco);
+    border-radius:var(--radio);
+    padding:24px 20px;
+    box-shadow:var(--sombra);
+    border:1px solid var(--gris-borde);
+    text-align:center;
+  }
+  .sos-value{
+    font-size:52px;
+    font-weight:800;
+    color:var(--azul-oscuro);
+    line-height:1;
+    margin-bottom:4px;
+    transition:transform .18s ease;
+  }
+  .sos-value.pulse{transform:scale(1.12); color:var(--rojo);}
+  .sos-label{
+    font-size:12.5px;
+    color:var(--texto-suave);
+    margin-bottom:18px;
+    font-weight:600;
+    letter-spacing:.03em;
+  }
+  input[type=range]{
+    -webkit-appearance:none;
+    width:100%;
+    height:10px;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--rojo) 0%, var(--rojo) var(--fill,0%), var(--gris-borde) var(--fill,0%), var(--gris-borde) 100%);
+    outline:none;
+    margin:10px 0 6px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:28px;height:28px;
+    border-radius:50%;
+    background:var(--blanco);
+    border:4px solid var(--rojo);
+    box-shadow:0 4px 10px rgba(227,6,19,0.35);
+    cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:28px;height:28px;
+    border-radius:50%;
+    background:var(--blanco);
+    border:4px solid var(--rojo);
+    box-shadow:0 4px 10px rgba(227,6,19,0.35);
+    cursor:pointer;
+    border:4px solid var(--rojo);
+  }
+  .sos-range-labels{
+    display:flex;
+    justify-content:space-between;
+    font-size:11.5px;
+    color:var(--texto-suave);
+    font-weight:600;
+    margin-bottom:16px;
+  }
+  .bono-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--gris-claro);
+    padding:10px 18px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:14px;
+    color:var(--azul-oscuro);
+  }
+  .bono-pill b{color:var(--rojo); font-size:16px;}
+  .bono-pill.bump{animation:bump .4s ease;}
+  @keyframes bump{
+    0%{transform:scale(1);}
+    40%{transform:scale(1.12);}
+    100%{transform:scale(1);}
+  }
+
+  /* TOTAL CARD */
+  .total-card{
+    background:linear-gradient(160deg, var(--azul-oscuro) 0%, var(--azul-oscuro-2) 100%);
+    border-radius:24px;
+    padding:30px 22px 26px;
+    color:#fff;
+    box-shadow:var(--sombra-fuerte);
+    margin-top:36px;
+    position:relative;
+    overflow:hidden;
+  }
+  .total-card::before{
+    content:"";
+    position:absolute;
+    top:-60px; right:-60px;
+    width:200px;height:200px;
+    background:radial-gradient(circle, rgba(227,6,19,0.35), transparent 70%);
+    pointer-events:none;
+  }
+  .total-header{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.7);
+    margin-bottom:18px;
+    text-align:center;
+  }
+  .breakdown{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-bottom:18px;
+    position:relative;
+    z-index:1;
+  }
+  .breakdown-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:14.5px;
+    color:rgba(255,255,255,0.85);
+  }
+  .breakdown-row b{
+    font-size:17px;
+    color:#fff;
+    font-weight:700;
+  }
+  .divider{
+    height:1px;
+    background:rgba(255,255,255,0.18);
+    margin:6px 0 16px;
+  }
+  .total-label{
+    text-align:center;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.1em;
+    color:rgba(255,255,255,0.65);
+    margin-bottom:4px;
+  }
+  .total-amount{
+    text-align:center;
+    font-size:clamp(42px, 12vw, 60px);
+    font-weight:900;
+    letter-spacing:-0.02em;
+    margin-bottom:20px;
+    position:relative;
+    z-index:1;
+  }
+
+  .progress-outer{
+    background:rgba(255,255,255,0.15);
+    border-radius:999px;
+    height:16px;
+    overflow:hidden;
+    position:relative;
+    margin-bottom:8px;
+  }
+  .progress-inner{
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--rojo), #ff5b63);
+    width:0%;
+    transition:width .5s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+  }
+  .progress-inner.full{
+    background:linear-gradient(90deg, #ffb800, var(--rojo), #ffb800);
+    background-size:200% 100%;
+    animation:shine 1.4s linear infinite;
+  }
+  @keyframes shine{
+    0%{background-position:0% 0;}
+    100%{background-position:200% 0;}
+  }
+  .progress-caption{
+    display:flex;
+    justify-content:space-between;
+    font-size:11.5px;
+    color:rgba(255,255,255,0.65);
+    margin-bottom:18px;
+  }
+
+  .motiv-msg{
+    text-align:center;
+    font-size:15px;
+    font-weight:700;
+    background:rgba(255,255,255,0.1);
+    border-radius:14px;
+    padding:12px 14px;
+    margin-top:4px;
+  }
+
+  /* TIPS */
+  .tips{
+    margin-top:14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .tip{
+    background:#FFF7E6;
+    border:1px solid #FFE4A8;
+    color:#7A5A00;
+    font-size:13.5px;
+    font-weight:600;
+    padding:12px 14px;
+    border-radius:14px;
+    line-height:1.4;
+    animation:fadein .3s ease;
+  }
+  @keyframes fadein{
+    from{opacity:0; transform:translateY(-6px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  footer{
+    text-align:center;
+    margin-top:34px;
+    font-size:11.5px;
+    color:var(--texto-suave);
+  }
+
+  /* CONFETTI + CELEBRATION */
+  #confetti-canvas{
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:999;
+  }
+
+  .celebration-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(11,37,69,0.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s ease;
+    padding:20px;
+  }
+  .celebration-overlay.show{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .celebration-box{
+    background:#fff;
+    border-radius:24px;
+    padding:36px 28px;
+    text-align:center;
+    max-width:340px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.3);
+    transform:scale(0.85);
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .celebration-overlay.show .celebration-box{
+    transform:scale(1);
+  }
+  .trophy{
+    font-size:64px;
+    margin-bottom:10px;
+  }
+  .celebration-box h3{
+    color:var(--rojo);
+    font-size:22px;
+    margin:0 0 8px;
+    font-weight:900;
+  }
+  .celebration-box p{
+    color:var(--azul-oscuro);
+    font-size:15px;
+    margin:0 0 20px;
+    font-weight:600;
+    line-height:1.4;
+  }
+  .celebration-box button{
+    background:var(--azul-oscuro);
+    color:#fff;
+    border:none;
+    padding:12px 26px;
+    border-radius:12px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .celebration-box button:hover{background:var(--rojo);}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="badge">🏆 CONCURSO COMERCIAL</div>
+    <h1>¿CUÁNTO PUEDES <span>GANAR</span> ESTE MES?</h1>
+    <p class="subtitle">Simula tus exhibiciones y el crecimiento de tu SOS para conocer tu premio proyectado.</p>
+  </header>
+
+  <!-- SECCIÓN 1 -->
+  <div class="section-title">
+    <div class="step-dot">1</div>
+    <div>
+      <h2>Tus Exhibiciones</h2>
+      <p>Suma tus puntos de exhibición en tienda.</p>
+    </div>
+  </div>
+
+  <div class="cards">
+    <!-- Card Minigóndola -->
+    <div class="card">
+      <div class="card-icon">🏪</div>
+      <div class="card-title">Minigóndolas / Mueble de Piso</div>
+      <div class="card-value">Valor unidad: <b>$30.000</b></div>
+      <div class="counter-row">
+        <button class="counter-btn minus" data-target="mini" data-dir="-1">−</button>
+        <div class="counter-num" id="num-mini">0</div>
+        <button class="counter-btn plus" data-target="mini" data-dir="1">+</button>
+      </div>
+      <div class="max-note">Máximo permitido: 3</div>
+      <div class="warn-msg" id="warn-mini">Has alcanzado el máximo permitido.</div>
+    </div>
+
+    <!-- Card Counter -->
+    <div class="card">
+      <div class="card-icon">💳</div>
+      <div class="card-title">Counter Puesto de Pago</div>
+      <div class="card-value">Valor unidad: <b>$20.000</b></div>
+      <div class="counter-row">
+        <button class="counter-btn minus" data-target="counter" data-dir="-1">−</button>
+        <div class="counter-num" id="num-counter">0</div>
+        <button class="counter-btn plus" data-target="counter" data-dir="1">+</button>
+      </div>
+      <div class="max-note">Máximo permitido: 5</div>
+      <div class="warn-msg" id="warn-counter">Has alcanzado el máximo permitido.</div>
+    </div>
+
+    <!-- Card Entrepaño -->
+    <div class="card">
+      <div class="card-icon">📦</div>
+      <div class="card-title">Entrepaño</div>
+      <div class="card-value">Valor unidad: <b>$15.000</b></div>
+      <div class="counter-row">
+        <button class="counter-btn minus" data-target="entre" data-dir="-1">−</button>
+        <div class="counter-num" id="num-entre">0</div>
+        <button class="counter-btn plus" data-target="entre" data-dir="1">+</button>
+      </div>
+      <div class="max-note">Máximo permitido: 5</div>
+      <div class="warn-msg" id="warn-entre">Has alcanzado el máximo permitido.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2 -->
+  <div class="section-title">
+    <div class="step-dot">2</div>
+    <div>
+      <h2>Crecimiento del SOS</h2>
+      <p>Ajusta el % de crecimiento que proyectas lograr.</p>
+    </div>
+  </div>
+
+  <div class="sos-card">
+    <div class="sos-value" id="sos-value">0%</div>
+    <div class="sos-label">SOS PROYECTADO</div>
+    <input type="range" id="sos-slider" min="0" max="15" step="1" value="0" style="--fill:0%">
+    <div class="sos-range-labels">
+      <span>0%</span>
+      <span>15%</span>
+    </div>
+    <div class="bono-pill" id="bono-pill">Bono SOS: <b id="bono-value">$0</b></div>
+  </div>
+
+  <!-- SECCIÓN 3 -->
+  <div class="section-title">
+    <div class="step-dot">3</div>
+    <div>
+      <h2>Tu premio proyectado</h2>
+      <p>Este es tu total estimado del mes.</p>
+    </div>
+  </div>
+
+  <div class="total-card">
+    <div class="total-header">Resumen de tu premio</div>
+    <div class="breakdown">
+      <div class="breakdown-row">
+        <span>Exhibiciones</span>
+        <b id="exhib-amount">$0</b>
+      </div>
+      <div class="breakdown-row">
+        <span>Bono SOS</span>
+        <b id="bono-amount">$0</b>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="total-label">TOTAL PREMIO</div>
+    <div class="total-amount" id="total-amount">$0</div>
+
+    <div class="progress-outer">
+      <div class="progress-inner" id="progress-inner"></div>
+    </div>
+    <div class="progress-caption">
+      <span id="progress-percent">0%</span>
+      <span>Premio máximo: $125.000</span>
+    </div>
+
+    <div class="motiv-msg" id="motiv-msg">💪 ¡Aún tienes mucho potencial por ganar!</div>
+  </div>
+
+  <div class="tips" id="tips-container"></div>
+
+  <footer>Simulador informativo · Los valores reales pueden variar según condiciones del concurso.</footer>
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="celebration-overlay" id="celebration-overlay">
+  <div class="celebration-box">
+    <div class="trophy">🏆</div>
+    <h3>🎉 ¡FELICITACIONES!</h3>
+    <p>¡Lograste el Premio Máximo del Concurso!</p>
+    <button id="close-celebration">Continuar</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const MAX = { mini:3, counter:5, entre:5 };
+  const VALUES = { mini:30000, counter:20000, entre:15000 };
+  const EXHIB_CAP = 90000;
+  const PREMIO_MAX = 125000;
+
+  let state = { mini:0, counter:0, entre:0, sos:0 };
+  let celebrated = false;
+
+  const fmt = (n) => '$' + Math.round(n).toLocaleString('es-CO');
+
+  function showWarn(target){
+    const el = document.getElementById('warn-' + target);
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(()=> el.classList.remove('show'), 1800);
+  }
+
+  document.querySelectorAll('.counter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const target = btn.dataset.target;
+      const dir = parseInt(btn.dataset.dir,10);
+      const next = state[target] + dir;
+      if(next < 0) return;
+      if(next > MAX[target]){
+        showWarn(target);
+        return;
+      }
+      state[target] = next;
+      document.getElementById('num-' + target).textContent = next;
+      updateAll();
+    });
+  });
+
+  const slider = document.getElementById('sos-slider');
+  slider.addEventListener('input', ()=>{
+    state.sos = parseInt(slider.value,10);
+    slider.style.setProperty('--fill', (state.sos/15*100) + '%');
+    updateAll();
+  });
+
+  function getBono(sos){
+    if(sos >= 10) return 35000;
+    if(sos >= 8) return 25000;
+    if(sos >= 5) return 15000;
+    return 0;
+  }
+
+  function animateNumber(el, from, to, duration=450){
+    const start = performance.now();
+    function frame(now){
+      const t = Math.min(1, (now-start)/duration);
+      const eased = 1 - Math.pow(1-t, 3);
+      const val = from + (to-from)*eased;
+      el.textContent = fmt(val);
+      if(t < 1) requestAnimationFrame(frame);
+      else el.textContent = fmt(to);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  let prevExhib = 0, prevBono = 0, prevTotal = 0;
+
+  function updateAll(){
+    const exhibRaw = state.mini*VALUES.mini + state.counter*VALUES.counter + state.entre*VALUES.entre;
+    const exhib = Math.min(exhibRaw, EXHIB_CAP);
+    const bono = getBono(state.sos);
+    const total = exhib + bono;
+
+    // SOS display
+    const sosValueEl = document.getElementById('sos-value');
+    sosValueEl.textContent = state.sos + '%';
+    sosValueEl.classList.add('pulse');
+    setTimeout(()=> sosValueEl.classList.remove('pulse'), 180);
+
+    // Bono pill animation
+    const bonoPill = document.getElementById('bono-pill');
+    document.getElementById('bono-value').textContent = fmt(bono);
+    if(bono !== prevBono){
+      bonoPill.classList.remove('bump');
+      void bonoPill.offsetWidth;
+      bonoPill.classList.add('bump');
+    }
+
+    // Animated numbers
+    animateNumber(document.getElementById('exhib-amount'), prevExhib, exhib);
+    animateNumber(document.getElementById('bono-amount'), prevBono, bono);
+    animateNumber(document.getElementById('total-amount'), prevTotal, total);
+
+    prevExhib = exhib; prevBono = bono; prevTotal = total;
+
+    // Progress bar
+    const pct = Math.min(100, (total / PREMIO_MAX) * 100);
+    const progressInner = document.getElementById('progress-inner');
+    progressInner.style.width = pct + '%';
+    document.getElementById('progress-percent').textContent = Math.round(pct) + '%';
+    if(total >= PREMIO_MAX){
+      progressInner.classList.add('full');
+    } else {
+      progressInner.classList.remove('full');
+    }
+
+    // Motivational message
+    const motivEl = document.getElementById('motiv-msg');
+    let msg = '';
+    if(total < 50000) msg = '💪 ¡Aún tienes mucho potencial por ganar!';
+    else if(total < 90000) msg = '🚀 ¡Vas por muy buen camino!';
+    else if(total < 125000) msg = '🔥 ¡Estás muy cerca del premio máximo!';
+    else msg = '🏆 ¡Excelente! Alcanzaste el premio máximo del concurso.';
+    motivEl.textContent = msg;
+
+    // Smart tips
+    const tips = [];
+    if(state.mini === 2){
+      tips.push('💡 Si consigues una Minigóndola adicional alcanzarás el máximo permitido para esta categoría.');
+    }
+    if(state.sos === 8){
+      tips.push('💡 Con solo aumentar 2% más tu SOS ganarías $10.000 adicionales.');
+    }
+    if(total >= 110000 && total < 125000){
+      tips.push('⭐ Solo te faltan ' + fmt(125000-total) + ' para llegar al premio máximo.');
+    }
+    const tipsContainer = document.getElementById('tips-container');
+    tipsContainer.innerHTML = '';
+    tips.forEach(t=>{
+      const div = document.createElement('div');
+      div.className = 'tip';
+      div.textContent = t;
+      tipsContainer.appendChild(div);
+    });
+
+    // Celebration
+    if(total >= PREMIO_MAX && !celebrated){
+      celebrated = true;
+      triggerCelebration();
+    } else if(total < PREMIO_MAX){
+      celebrated = false;
+    }
+  }
+
+  // ---- CONFETTI ----
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  let confettiParticles = [];
+  let confettiAnimId = null;
+
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  const confettiColors = ['#E30613', '#0B2545', '#FFB800', '#FFFFFF', '#123a6b'];
+
+  function launchConfetti(){
+    confettiParticles = [];
+    const count = 140;
+    for(let i=0;i<count;i++){
+      confettiParticles.push({
+        x: Math.random()*canvas.width,
+        y: -20 - Math.random()*canvas.height*0.5,
+        w: 6 + Math.random()*6,
+        h: 8 + Math.random()*10,
+        color: confettiColors[Math.floor(Math.random()*confettiColors.length)],
+        rot: Math.random()*360,
+        rotSpeed: (Math.random()-0.5)*10,
+        speedY: 2 + Math.random()*3,
+        speedX: (Math.random()-0.5)*2,
+        opacity: 1
+      });
+    }
+    const startTime = performance.now();
+    function frame(now){
+      const elapsed = now - startTime;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      confettiParticles.forEach(p=>{
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.rot += p.rotSpeed;
+        if(elapsed > 2200) p.opacity = Math.max(0, 1 - (elapsed-2200)/800);
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot * Math.PI/180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      });
+      if(elapsed < 3000){
+        confettiAnimId = requestAnimationFrame(frame);
+      } else {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+      }
+    }
+    if(confettiAnimId) cancelAnimationFrame(confettiAnimId);
+    confettiAnimId = requestAnimationFrame(frame);
+  }
+
+  function triggerCelebration(){
+    launchConfetti();
+    document.getElementById('celebration-overlay').classList.add('show');
+  }
+
+  document.getElementById('close-celebration').addEventListener('click', ()=>{
+    document.getElementById('celebration-overlay').classList.remove('show');
+  });
+
+  // init
+  updateAll();
+})();
+</script>
+
+</body>
+</html>
